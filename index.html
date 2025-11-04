@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be Mine? (The Ultimate Choice)</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the dark theme and dramatic effects */
+        .heart-bg {
+            /* A simple repeating linear gradient to add some visual texture */
+            background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Dramatic shadow for the main container */
+        #app {
+            box-shadow: 0 0 80px rgba(255, 0, 100, 0.8), 0 0 20px rgba(255, 100, 150, 0.5);
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* Custom styles for the No button container */
+        .button-container {
+            position: relative;
+            /* Increased height for more movement room */
+            height: 250px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Initial styling for the No button before it starts running away */
+        #no-btn {
+            /* Faster transition time for a more erratic escape */
+            transition: all 0.1s ease-out;
+            cursor: pointer;
+            z-index: 50; /* Ensure No button is above the container but below Yes if they overlap */
+        }
+        
+        /* Keyframes for the celebratory "confetti" animation on 'Yes' */
+        @keyframes confetti-pop {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .confetti-animation {
+            animation: confetti-pop 0.5s infinite alternate;
+        }
+    </style>
+</head>
+<!-- Switched to dark background -->
+<body class="bg-gray-900 heart-bg min-h-screen flex items-center justify-center p-4" style="font-family: 'Inter', sans-serif;">
+
+    <div id="app" class="w-full max-w-lg bg-gray-800 p-8 md:p-12 rounded-3xl text-center border border-pink-600">
+
+        <h1 class="text-4xl md:text-5xl font-extrabold text-pink-500 mb-2 select-none">
+            Will You Be My Valentine? 💘
+        </h1>
+        
+        <!-- New element for the funny counter/shame system -->
+        <p id="attempt-counter" class="text-sm font-light text-gray-400 mb-6 transition duration-500">
+            (The correct answer is YES!)
+        </p>
+
+        <div id="result-message" class="text-3xl font-bold text-yellow-400 mb-6 hidden">
+            <!-- Message will be displayed here -->
+        </div>
+
+        <div id="button-wrapper" class="button-container opacity-0 transition duration-500">
+
+            <!-- YES Button - Now fully controlled by JS for exponential growth -->
+            <button id="yes-btn" class="
+                bg-pink-600 hover:bg-pink-500 text-white font-bold py-3 px-8 
+                rounded-full shadow-lg transition duration-300 transform 
+                hover:scale-110 active:scale-95 text-lg z-20
+            " style="transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;">
+                Yes!
+            </button>
+
+            <!-- NO Button - Positioned absolutely to enable random movement -->
+            <button id="no-btn" class="
+                bg-red-700 hover:bg-red-600 text-white font-semibold py-2 px-6 
+                rounded-full shadow-xl text-base 
+                absolute transition duration-100 
+            " style="transform: translate(100%, 0); border: 2px solid white;">
+                No
+            </button>
+
+        </div>
+
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const appContainer = document.getElementById('app');
+        const resultMessage = document.getElementById('result-message');
+        const buttonWrapper = document.getElementById('button-wrapper');
+        const attemptCounter = document.getElementById('attempt-counter');
+
+        let noAttempts = 0; 
+        
+        // --- 1. Animation Logic (The "No" Button Runs Away) ---
+
+        /**
+         * Calculates a new random position for the "No" button within the container.
+         * The travel area is maximized to make it truly hard to catch.
+         */
+        function getRandomPosition() {
+            const containerWidth = buttonWrapper.clientWidth;
+            const containerHeight = buttonWrapper.clientHeight;
+            
+            // Random X and Y values that cover a wider range, relative to the center
+            const randomX = Math.random() * (containerWidth * 0.9) - (containerWidth * 0.45);
+            const randomY = Math.random() * (containerHeight * 0.9) - (containerHeight * 0.45);
+
+            return `translate(${randomX}px, ${randomY}px)`;
+        }
+
+        /**
+         * The core function that runs when the user tries to hover over or click "No".
+         */
+        function handleNoAttempt() {
+            noAttempts++;
+            
+            // Update the counter message with a funny/shaming text
+            attemptCounter.textContent = `(Failed attempt: ${noAttempts}. Maybe fate is trying to tell you something?)`;
+            attemptCounter.classList.add('text-red-400'); // Make the counter red when they fail
+
+            // 1. Move the 'No' button to a random position
+            noBtn.style.transform = getRandomPosition();
+            
+            // 2. Exponentially enlarge the 'Yes' button
+            // The scale factor increases by 0.2 for every failed attempt.
+            const newScale = 1 + (noAttempts * 0.25); 
+            yesBtn.style.transform = `scale(${newScale})`;
+            yesBtn.style.boxShadow = `0 0 ${20 + noAttempts * 5}px rgba(255, 0, 100, ${Math.min(1, noAttempts * 0.3)})`; // Shadow gets stronger
+        }
+
+        // Attach the escape mechanism
+        noBtn.addEventListener('mouseover', handleNoAttempt);
+        noBtn.addEventListener('click', handleNoAttempt);
+
+
+        // --- 2. Result Logic (For the "Yes" Button) ---
+        
+        yesBtn.addEventListener('click', () => {
+            // 1. Disable interactions
+            yesBtn.disabled = true;
+            noBtn.disabled = true;
+
+            // 2. Clear the wrapper and trigger success animation
+            buttonWrapper.innerHTML = '';
+            buttonWrapper.style.height = '100px'; 
+            appContainer.classList.add('confetti-animation');
+            
+            // 3. Update result message and style
+            resultMessage.textContent = "YES! I KNEW IT! Prepare for the best date ever! 🥳";
+            resultMessage.classList.remove('hidden');
+            resultMessage.classList.remove('text-green-600');
+            resultMessage.classList.add('text-yellow-400');
+            
+            // 4. Update the main container look
+            appContainer.classList.remove('shadow-2xl');
+            appContainer.style.borderColor = '#FCD34D'; // Yellow border
+            appContainer.style.boxShadow = '0 0 100px rgba(255, 250, 150, 1), 0 0 50px rgba(255, 100, 150, 0.5)';
+            
+            // 5. Update the counter for the final message
+            attemptCounter.textContent = `(You finally chose correctly after ${noAttempts} tries.)`;
+            attemptCounter.classList.remove('text-red-400');
+            attemptCounter.classList.add('text-yellow-400');
+        });
+
+        // Add an initial style to the No button and make the wrapper visible
+        function initialLayout() {
+            // Calculate the initial offset so "No" appears slightly to the side of "Yes"
+            const wrapperCenter = buttonWrapper.clientWidth / 2;
+            const yesBtnWidth = yesBtn.offsetWidth;
+            const offset = wrapperCenter + yesBtnWidth / 2 + 10; 
+            
+            noBtn.style.transform = `translateX(${offset}px)`;
+            buttonWrapper.style.opacity = '1';
+        }
+
+        // Run the initial layout after the window loads
+        window.onload = initialLayout;
+
+    </script>
+</body>
+</html>
