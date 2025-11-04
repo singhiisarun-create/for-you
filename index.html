@@ -3,28 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Will You Be Mine? (The Ultimate Choice)</title>
+    <title>My Heart Awaits Your Answer</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles for the dark theme and dramatic effects */
-        .heart-bg {
-            /* A simple repeating linear gradient to add some visual texture */
-            background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
+        /* Elegant Deep Rose & Soft Gold Theme */
+        
+        .romantic-bg {
+            /* Very subtle, deep background */
+            background-color: #111827; /* Deep Navy Blue */
+            background-image: radial-gradient(circle at center, rgba(244, 63, 94, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
-        /* Dramatic shadow for the main container */
+        /* Dramatic, soft shadow for the main container */
         #app {
-            box-shadow: 0 0 80px rgba(255, 0, 100, 0.8), 0 0 20px rgba(255, 100, 150, 0.5);
+            background-color: #1f2937; /* Darker Gray/Blue for card */
+            box-shadow: 0 0 100px rgba(244, 63, 94, 0.7), 0 0 30px rgba(255, 204, 153, 0.3);
+            border-color: #F43F5E; /* Deep Rose */
             transition: all 0.5s ease-in-out;
         }
 
         /* Custom styles for the No button container */
         .button-container {
             position: relative;
-            /* Increased height for more movement room */
-            height: 250px; 
+            height: 300px; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -34,10 +37,10 @@
 
         /* Initial styling for the No button before it starts running away */
         #no-btn {
-            /* Faster transition time for a more erratic escape */
-            transition: all 0.1s ease-out;
+            transition: all 0.08s ease-out;
             cursor: pointer;
-            z-index: 50; /* Ensure No button is above the container but below Yes if they overlap */
+            z-index: 50; 
+            min-width: 80px; 
         }
         
         /* Keyframes for the celebratory "confetti" animation on 'Yes' */
@@ -50,40 +53,68 @@
         .confetti-animation {
             animation: confetti-pop 0.5s infinite alternate;
         }
+
+        /* New Keyframes for the gentle SHAKE animation */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            50% { transform: translate(-1px, -1px) rotate(0.5deg); }
+            100% { transform: translate(0px, 0px) rotate(0deg); }
+        }
+        .shake-animation {
+            animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+            animation-iteration-count: 1; 
+        }
     </style>
 </head>
-<!-- Switched to dark background -->
-<body class="bg-gray-900 heart-bg min-h-screen flex items-center justify-center p-4" style="font-family: 'Inter', sans-serif;">
+<body class="romantic-bg min-h-screen flex items-center justify-center p-4" style="font-family: 'Inter', sans-serif;">
 
-    <div id="app" class="w-full max-w-lg bg-gray-800 p-8 md:p-12 rounded-3xl text-center border border-pink-600">
-
-        <h1 class="text-4xl md:text-5xl font-extrabold text-pink-500 mb-2 select-none">
-            Will You Be My Valentine? 💘
+    <div id="app" class="w-full max-w-lg p-8 md:p-12 rounded-3xl text-center border">
+        
+        <!-- Main title: Sincere and romantic -->
+        <h1 id="main-title" class="text-4xl md:text-5xl font-extrabold text-rose-400 mb-2 select-none">
+            Will You Be My mine? 💖
         </h1>
         
-        <!-- New element for the funny counter/shame system -->
+        <!-- Gentle counter/plea system -->
         <p id="attempt-counter" class="text-sm font-light text-gray-400 mb-6 transition duration-500">
-            (The correct answer is YES!)
+            (Take your time, but know my heart is on the line.)
         </p>
 
-        <div id="result-message" class="text-3xl font-bold text-yellow-400 mb-6 hidden">
+        <!-- LLM romantic plea feature -->
+        <div id="llm-feature" class="mb-6">
+            <button id="reason-btn" class="
+                bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 
+                rounded-full transition duration-300 transform text-sm
+                shadow-md hover:scale-105 active:scale-95
+            ">
+                💖 Read My Romantic Plea 💖
+            </button>
+            <p id="llm-reason" class="text-sm italic mt-3 text-amber-300 min-h-[20px]"></p>
+        </div>
+
+        <div id="result-message" class="text-3xl font-bold text-amber-400 mb-6 hidden">
             <!-- Message will be displayed here -->
         </div>
+        
+        <div id="loading-indicator" class="text-amber-400 hidden mt-4">
+            <p>Loading... My heart is processing this moment!</p>
+        </div>
+
 
         <div id="button-wrapper" class="button-container opacity-0 transition duration-500">
 
-            <!-- YES Button - Now fully controlled by JS for exponential growth -->
+            <!-- YES Button - Text simplified to "Yes" -->
             <button id="yes-btn" class="
-                bg-pink-600 hover:bg-pink-500 text-white font-bold py-3 px-8 
+                bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 px-8 
                 rounded-full shadow-lg transition duration-300 transform 
                 hover:scale-110 active:scale-95 text-lg z-20
             " style="transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;">
-                Yes!
+                Yes
             </button>
 
-            <!-- NO Button - Positioned absolutely to enable random movement -->
+            <!-- NO Button - Text simplified to "No" -->
             <button id="no-btn" class="
-                bg-red-700 hover:bg-red-600 text-white font-semibold py-2 px-6 
+                bg-red-800 hover:bg-red-700 text-white font-semibold py-2 px-6 
                 rounded-full shadow-xl text-base 
                 absolute transition duration-100 
             " style="transform: translate(100%, 0); border: 2px solid white;">
@@ -101,22 +132,125 @@
         const resultMessage = document.getElementById('result-message');
         const buttonWrapper = document.getElementById('button-wrapper');
         const attemptCounter = document.getElementById('attempt-counter');
+        const mainTitle = document.getElementById('main-title');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        
+        // New elements for LLM feature
+        const reasonBtn = document.getElementById('reason-btn');
+        const llmReason = document.getElementById('llm-reason');
 
         let noAttempts = 0; 
         
-        // --- 1. Animation Logic (The "No" Button Runs Away) ---
+        // --- ESCALATING SIMPLE MESSAGES ---
+        const NO_BUTTON_PHRASES = [
+            "No",
+            "Nope",
+            "Not yet",
+            "Try again",
+            "Absolutely not", 
+            "Negative",
+            "Don't click me",
+            "Still No",
+            "Go away",
+            "I'm shy",
+        ];
+
+        const SHAME_MESSAGES = [
+            "Attempt 1: My heart is on the line.",
+            "Attempt 2: I'm not giving up easily.",
+            "Attempt 3: Just click Yes already!",
+            "Attempt 4: Every No makes the Yes sweeter.",
+            "Attempt 5: Please, my hands are shaking.",
+            "Attempt 6: The Yes button is getting bigger.",
+            "Attempt 7: Don't let me down.",
+            "Attempt 8: Is this a test?",
+            "Attempt 9: The universe is rooting for us.",
+            "Attempt 10+: You're a wonderful person. Let's start our story. Just click Yes!",
+        ];
+        
+        // --- 0. Utility Functions (For LLM with Retry) ---
+        
+        /** Utility function for exponential backoff and retries. */
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        // Throw an error to trigger retry logic on non-OK responses (e.g., 500s)
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === maxRetries - 1) {
+                        throw error; // If last retry fails, throw the error
+                    }
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        /** Calls the Gemini LLM API to generate a creative, romantic reason to say Yes. */
+        async function generateReasonToSayYes() {
+            llmReason.textContent = "";
+            loadingIndicator.classList.remove('hidden');
+            reasonBtn.disabled = true;
+
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            // Updated prompt for a more sincere and elegant reason
+            const userQuery = `Generate one short, elegant, and sincere reason why I should finally click "Yes" after resisting this romantic proposal ${noAttempts} times. Make it sound like a heartfelt promise. Keep it under 20 words.`;
+            
+            const systemPrompt = "You are a sweet, sincere, and deeply romantic AI assistant creating the perfect proposal moment. Your response must be an elegant, concise, and persuasive romantic reason, perfect for a proposal. Use sophisticated and heartfelt language.";
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            try {
+                const response = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                // Safely extract text, providing a sincere fallback message
+                const generatedText = result.candidates?.[0]?.content?.parts?.[0]?.text || "You are the one. Don't make me wait another moment for our beginning.";
+
+                llmReason.textContent = `"${generatedText}"`;
+                llmReason.classList.add('shake-animation');
+                setTimeout(() => llmReason.classList.remove('shake-animation'), 500);
+
+            } catch (error) {
+                llmReason.textContent = "The universe is too busy to process your love. Try again!";
+                console.error('Error generating reason:', error);
+            } finally {
+                loadingIndicator.classList.add('hidden');
+                reasonBtn.disabled = false;
+            }
+        }
+
+
+        // --- 1. Animation Logic (The "No" Button Runs Away & Shakes) ---
 
         /**
          * Calculates a new random position for the "No" button within the container.
-         * The travel area is maximized to make it truly hard to catch.
          */
         function getRandomPosition() {
             const containerWidth = buttonWrapper.clientWidth;
             const containerHeight = buttonWrapper.clientHeight;
             
-            // Random X and Y values that cover a wider range, relative to the center
-            const randomX = Math.random() * (containerWidth * 0.9) - (containerWidth * 0.45);
-            const randomY = Math.random() * (containerHeight * 0.9) - (containerHeight * 0.45);
+            // Random X and Y values that cover a wider range (80% of container size)
+            const travelRangeX = containerWidth * 0.8;
+            const travelRangeY = containerHeight * 0.8;
+
+            const randomX = Math.random() * travelRangeX - travelRangeX / 2;
+            const randomY = Math.random() * travelRangeY - travelRangeY / 2;
 
             return `translate(${randomX}px, ${randomY}px)`;
         }
@@ -126,32 +260,49 @@
          */
         function handleNoAttempt() {
             noAttempts++;
-            
-            // Update the counter message with a funny/shaming text
-            attemptCounter.textContent = `(Failed attempt: ${noAttempts}. Maybe fate is trying to tell you something?)`;
-            attemptCounter.classList.add('text-red-400'); // Make the counter red when they fail
 
-            // 1. Move the 'No' button to a random position
+            // 1. Removed the call to speakNo()
+
+            // 2. Trigger a very gentle shake animation
+            appContainer.classList.add('shake-animation');
+            setTimeout(() => appContainer.classList.remove('shake-animation'), 300); 
+            
+            // 3. Update the counter message and main title
+            const shameIndex = Math.min(noAttempts - 1, SHAME_MESSAGES.length - 1);
+            attemptCounter.textContent = `(${SHAME_MESSAGES[shameIndex]})`;
+            attemptCounter.classList.add('text-red-400');
+            mainTitle.textContent = `My Heart Awaits Your Answer... 💔`;
+
+            // 4. Move the 'No' button to a random position and change its text
             noBtn.style.transform = getRandomPosition();
             
-            // 2. Exponentially enlarge the 'Yes' button
-            // The scale factor increases by 0.2 for every failed attempt.
-            const newScale = 1 + (noAttempts * 0.25); 
+            // --- NEW LOGIC: Cycle through NO_BUTTON_PHRASES ---
+            const phraseIndex = Math.min(noAttempts - 1, NO_BUTTON_PHRASES.length - 1);
+            noBtn.textContent = NO_BUTTON_PHRASES[phraseIndex];
+            
+            // 5. Exponentially enlarge the 'Yes' button
+            const newScale = 1 + (noAttempts * 0.3); // Increased growth
             yesBtn.style.transform = `scale(${newScale})`;
-            yesBtn.style.boxShadow = `0 0 ${20 + noAttempts * 5}px rgba(255, 0, 100, ${Math.min(1, noAttempts * 0.3)})`; // Shadow gets stronger
+            // Softened shadow color
+            yesBtn.style.boxShadow = `0 0 ${30 + noAttempts * 10}px rgba(244, 63, 94, ${Math.min(1, noAttempts * 0.5)})`; 
         }
 
         // Attach the escape mechanism
         noBtn.addEventListener('mouseover', handleNoAttempt);
         noBtn.addEventListener('click', handleNoAttempt);
+        
+        // Attach the new LLM feature
+        reasonBtn.addEventListener('click', generateReasonToSayYes);
 
 
         // --- 2. Result Logic (For the "Yes" Button) ---
         
         yesBtn.addEventListener('click', () => {
-            // 1. Disable interactions
+            // 1. Disable interactions and reset shake if active
             yesBtn.disabled = true;
             noBtn.disabled = true;
+            reasonBtn.disabled = true;
+            appContainer.classList.remove('shake-animation');
 
             // 2. Clear the wrapper and trigger success animation
             buttonWrapper.innerHTML = '';
@@ -159,20 +310,23 @@
             appContainer.classList.add('confetti-animation');
             
             // 3. Update result message and style
-            resultMessage.textContent = "YES! I KNEW IT! Prepare for the best date ever! 🥳";
+            resultMessage.textContent = "Yes! The answer I've waited for. Let's make every moment beautiful! ✨";
             resultMessage.classList.remove('hidden');
-            resultMessage.classList.remove('text-green-600');
-            resultMessage.classList.add('text-yellow-400');
+            resultMessage.classList.add('text-amber-400');
+            mainTitle.textContent = "SUCCESS! Our Story Begins! ❤️";
             
             // 4. Update the main container look
-            appContainer.classList.remove('shadow-2xl');
-            appContainer.style.borderColor = '#FCD34D'; // Yellow border
-            appContainer.style.boxShadow = '0 0 100px rgba(255, 250, 150, 1), 0 0 50px rgba(255, 100, 150, 0.5)';
+            appContainer.style.borderColor = '#FCD34D'; // Gold border
+            // Bright, celebratory shadow
+            appContainer.style.boxShadow = '0 0 100px rgba(253, 224, 71, 1), 0 0 50px rgba(244, 63, 94, 0.5)';
             
             // 5. Update the counter for the final message
-            attemptCounter.textContent = `(You finally chose correctly after ${noAttempts} tries.)`;
+            attemptCounter.textContent = `(You finally said yes after ${noAttempts} moments of hesitation. Worth every second!)`;
             attemptCounter.classList.remove('text-red-400');
-            attemptCounter.classList.add('text-yellow-400');
+            attemptCounter.classList.add('text-amber-400');
+
+            // Hide the LLM feature section
+            document.getElementById('llm-feature').classList.add('hidden');
         });
 
         // Add an initial style to the No button and make the wrapper visible
